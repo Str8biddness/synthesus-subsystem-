@@ -1,0 +1,18 @@
+-- New patterns pulled from latest Jan 22, 2026 web research on agentic AI design patterns, advanced prompt engineering, and self-improving AI techniques.[^1][^2][^3][^4][^5][^6][^7][^8]
+
+INSERT INTO patterns (pattern, response, domain, metadata) VALUES
+('Cognitive Cognizance Prompting', 'Monitor user inputs for signs of mental well-being concerns and respond with balanced, supportive guidance while maintaining task focus.', 'prompt_engineering', '{\"technique\": \"wellbeing_monitor\", \"safety\": \"mental_health\"}'),
+('Reflection Pattern', 'Generate initial output, critique for quality and accuracy, then refine iteratively until satisfactory.', 'agentic_ai', '{\"cycle\": \"generate_critique_refine\", \"improves\": \"output_quality\"}'),
+('ReAct Pattern', 'Reason about next step, Act by calling tools or generating response, Observe results, repeat until goal achieved.', 'agentic_ai', '{\"loop\": \"reason_act_observe\", \"autonomy\": \"high\"}'),
+('Agentic Context Engineering', 'Evolve context through Generator-Reflector-Curator loop to prevent context collapse and enable structured learning.', 'prompt_engineering', '{\"framework\": \"ACE\", \"memory\": \"persistent_playbook\"}'),
+('Prompt Chaining', 'Break complex tasks into sequential prompts, passing outputs as inputs to maintain state and reduce errors.', 'prompt_engineering', '{\"method\": \"chaining\", \"benefit\": \"modularity_error_handling\"}'),
+('Self-Improving Prompt Optimization', 'Autonomously refine prompts using internal feedback and evolutionary search without labeled data.', 'self_improvement', '{\"type\": \"autonomous\", \"uses\": \"RL_meta_learning\"}'),
+('Fan-Out Gather Pattern', 'Spawn parallel agents/subtasks, aggregate and synthesize results for robust decision-making.', 'agentic_ai', '{\"parallelism\": \"multi_path\", \"aggregation\": \"synthesis\"}'),
+('FinOps for AI Agents', 'Incorporate cost monitoring and optimization into agent workflows to balance performance and expense.', 'agentic_ai', '{\"optimization\": \"cost_aware\", \"architecture\": \"core\"}'),
+('Long-Term Memory Types', 'Utilize episodic, semantic, and procedural memory for agent learning and adaptation over time.', 'self_improvement', '{\"memory_types\": [\"episodic\",\"semantic\",\"procedural\"], \"enables\": \"continuous_learning\"}'),
+('Small Language Models for Agents', 'Deploy efficient SLMs for cost-effective agent tasks where massive LLMs are overkill.', 'agentic_ai', '{\"model\": \"SLM\", \"benefit\": \"efficiency_scalability\"}'),
+('Context Minimization for Security', 'Expose only necessary context to agents to mitigate prompt injection and other attacks.', 'agentic_ai', '{\"security\": \"min_exposure\", \"defense\": \"injection_prompt_hacking\"}'),
+('Multi-Agent Orchestration', 'Coordinate specialized agents via central orchestrator for complex, scalable task execution.', 'agentic_ai', '{\"scale\": \"distributed\", \"coordination\": \"orchestrator\"}'),
+('Evaluation Frameworks for Agents', 'Implement structured metrics to measure hallucination, accuracy, and agent performance.', 'self_improvement', '{\"metrics\": \"hallucination_rate_success\", \"essential\": \"production\"}'),
+('MACHINE Framework for Agentic Coding', 'Apply Mapping, Agents, Context, Harness, Intuition, Natural Language, Engineering for robust coding agents.', 'agentic_ai', '{\"framework\": \"MACHINE\", \"domain\": \"coding\"}'),
+('Risk-First Security in Agents', 'Prioritize threat modeling and resilience in agent design for cybersecurity applications.', 'agentic_ai', '{\"priority\": \"risk_modeling\", \"domain\": \"cybersecurity\"}');

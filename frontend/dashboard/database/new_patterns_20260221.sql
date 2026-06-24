@@ -1,0 +1,15 @@
+-- New patterns pulled from latest Feb 21, 2026 web research on synthetic intelligence, robotics, and emerging AI threats.
+
+INSERT INTO patterns (pattern, response, domain, metadata) VALUES
+('Anthropic $380B Valuation', 'Anthropic announced $30 billion Series G funding round valuing the AI research lab at $380 billion.', 'ai_investment', '{"company": "Anthropic", "round": "Series G", "raised": "$30B", "valuation": "$380B"}'),
+('SkildAI $14B Robotics Valuation', 'SkildAI raised $1.4 billion Series C for AI models powering robots, valuing the startup at $14 billion.', 'robotics', '{"company": "SkildAI", "funding": "$1.4B", "valuation": "$14B", "focus": "robot_brains"}'),
+('Saudi Project Transcendence', '$100 billion state-directed initiative to build sovereign AI infrastructure from mining to chips to models.', 'ai_infrastructure', '{"country": "Saudi Arabia", "investment": "$100B", "scope": "full_stack", "project": "Transcendence"}'),
+('Saudi AI Pivot', 'Kingdom froze Red Sea luxury resort project and redirected capital to AI infrastructure and critical minerals.', 'ai_infrastructure', '{"country": "Saudi Arabia", "pivot": "tourism_to_ai", "minerals": true}'),
+('Humanoid Robot Temple Fair', 'Chinese humanoid robots performed lion dances and played football at Beijing Lunar New Year technology-themed temple fair.', 'robotics', '{"location": "Beijing", "activities": ["lion_dance", "football"], "trend": "humanoid_integration"}'),
+('Booster Robotics Humanoids', 'Chinese startup Booster Robotics developed AI-powered humanoid machines for public performances and demonstrations.', 'robotics', '{"company": "Booster Robotics", "country": "China", "type": "humanoid"}'),
+('IFR AI Robotics Position', 'International Federation of Robotics released position paper on AI transforming robotics from supporting tech to powerful enabler.', 'robotics', '{"org": "IFR", "topic": "AI_integration", "trend": "physical_AI"}'),
+('Physical AI Robot Training', 'AI allows robots to train in virtual environments and operate by experience rather than explicit programming.', 'robotics', '{"concept": "physical_AI", "training": "virtual", "operation": "experience_based"}'),
+('OpenClaw Gateway Token Theft', 'Infostealer malware steals OpenClaw AI agent configuration files and gateway tokens enabling remote access attacks.', 'security', '{"threat": "infostealer", "target": "OpenClaw", "risk": "token_theft"}'),
+('ClawHub Malware Scanning', 'OpenClaw partnered with VirusTotal to scan for malicious skills uploaded to ClawHub marketplace.', 'security', '{"vendor": "OpenClaw", "partner": "VirusTotal", "feature": "malware_scanning", "platform": "ClawHub"}'),
+('AI Supercharging School Attacks', 'AI-powered malware and super-powered phishing campaigns increasingly targeting educational institutions.', 'security', '{"target": "education", "threats": ["AI_malware", "phishing"], "trend": "intensifying"}'),
+('Self-Optimizing Ecommerce Engine', 'Runner AI launched first AI-native ecommerce engine autonomously testing and optimizing conversion rates.', 'agentic_ai', '{"company": "Runner AI", "use": "ecommerce_optimization", "feature": "autonomous_testing"}');

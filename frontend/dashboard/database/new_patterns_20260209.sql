@@ -1,0 +1,18 @@
+-- New patterns pulled from latest Feb 9, 2026 web research on agentic AI advancements, security risks, self-improving systems, and prompt engineering trends.[^1][^2][^3][^4][^5][^6][^7][^8][^9][^10][^11][^12][^13][^14][^15]
+
+INSERT INTO patterns (pattern, response, domain, metadata) VALUES
+('OpenAI Frontier', 'End-to-end platform for enterprises to build, manage, and orchestrate teams of AI agents connecting to external data and apps for autonomous task execution.', 'agentic_ai', '{"platform": "OpenAI Frontier", "enterprise": true, "launch": "Feb 2026"}'),
+('Anthropic Agent Swarms', 'Multi-agent swarms for parallel processing of complex multi-step tasks like legal and corporate analysis, achieving 45% on Mercor benchmarks.', 'agentic_ai', '{"model": "Opus 4.6", "benchmark": "Mercor 45%", "pattern": "swarms"}'),
+('VirusTotal Skill Scanning', 'Integrate VirusTotal scanning into AI agent marketplaces to detect malware in user-submitted skill extensions before execution.', 'security', '{"framework": "OpenClaw", "defense": "antivirus", "risk": "malicious skills"}'),
+('Google Conductor Extension', 'Gemini CLI extension using Markdown knowledge bases for context-driven agentic workflows and code generation.', 'agentic_ai', '{"google": "Conductor", "context": "markdown", "open_source": true}'),
+('Model Context Protocol MCP', 'Open protocol for secure AI agent connections to external systems, tools, and data sources across ecosystems.', 'agentic_ai', '{"standard": "MCP", "focus": "interoperability", "ecosystem": "enterprise"}'),
+('Shadow AI Endpoint Risks', 'Govern unapproved endpoint-deployed AI agents by monitoring privileges, tool calls, and enforcing explicit consents.', 'security', '{"threat": "shadow AI", "mitigation": "observability", "deployment": "endpoints"}'),
+('Agent Management Platforms', 'Scalable infrastructure providing governance, scoping, and observability for teams of production AI agents.', 'agentic_ai', '{"gartner": "valuable real estate", "key": "platform over agents"}'),
+('Prompt Architecture Design', 'Evolve prompt engineering to system-level architecture focusing on chains, roles, and optimization frameworks.', 'prompt_engineering', '{"pivot": "syntax to architecture", "trend": "2026"}'),
+('SICA Self-Improving Coder', 'Coding agents that autonomously rewrite their codebase via verifiable feedback loops on SWE-Bench.', 'self_improvement', '{"benchmark": "SWE-Bench 53%", "domain": "code", "autonomous": true}'),
+('AlphaEvolve Algorithm Discovery', 'Evolutionary coding for AI to invent novel algorithms surpassing decades-old records like Strassen matrix mult.', 'self_improvement', '{"deepmind": "AlphaEvolve", "breakthrough": "1969 Strassen"}'),
+('DARWIN LLM Evolution', 'Genetic algorithm framework where LLMs prompt-mutate each other''s training code with fault-tolerant debugging.', 'self_improvement', '{"method": "genetic prompting", "containerized": true}'),
+('Flow-GRPO In-Flow Optimization', 'Group refined policy optimization for real-time agent planning and tool use in multi-turn interactions.', 'agentic_ai', '{"algorithm": "Flow-GRPO", "gain": "14.9% accuracy"}'),
+('MI9 Runtime Governance', 'Integrated framework with risk indexing, telemetry, conformance FSMs, and containment for safe agentic AI.', 'agentic_ai', '{"components": 6, "real_time": true, "safety": "production"}'),
+('GEA Group-Evolving Agents', 'Open-ended self-improvement paradigm using group dynamics and selection for agent collectives.', 'self_improvement', '{"paradigm": "GEA", "collective": true}'),
+('ARTF Agentic RTB', 'IAB protocol enabling autonomous agent-to-agent real-time bidding and ad transactions.', 'agentic_ai', '{"industry": "advertising", "protocol": "ARTF"}');

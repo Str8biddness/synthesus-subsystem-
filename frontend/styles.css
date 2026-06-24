@@ -1,0 +1,141 @@
+:root {
+    --glass-bg: rgba(20, 25, 40, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --accent: #38bdf8;
+    --bg-desktop: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body { font-family: 'Outfit', sans-serif; color: var(--text-primary); overflow: hidden; height: 100vh; width: 100vw; user-select: none; }
+
+/* Hyperspace Background System */
+.hyperspace-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    overflow: hidden;
+    background: radial-gradient(ellipse at center, var(--bg-space) 0%, #000000 100%);
+}
+
+.starfield {
+    position: absolute; width: 100%; height: 100%;
+    background-image:
+        radial-gradient(2px 2px at 20px 30px, var(--accent-blue), transparent),
+        radial-gradient(2px 2px at 40px 70px, var(--accent-amber), transparent),
+        radial-gradient(1px 1px at 90px 40px, var(--accent-pink), transparent),
+        radial-gradient(1px 1px at 130px 80px, var(--accent-orange), transparent),
+        radial-gradient(2px 2px at 160px 30px, var(--accent-blue), transparent);
+    background-repeat: repeat; background-size: 200px 100px;
+    animation: starfield-twinkle 4s ease-in-out infinite alternate;
+}
+@keyframes starfield-twinkle { 0% { opacity: 0.3; transform: scale(1); } 100% { opacity: 1; transform: scale(1.05); } }
+
+.warp-stars { position: absolute; width: 100%; height: 100%; }
+.warp-stars::before {
+    content: ''; position: absolute; top: 20%; left: -100%; width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+    animation: warp-streak 8s linear infinite;
+}
+.warp-stars::after {
+    content: ''; position: absolute; top: 70%; right: -100%; width: 100%; height: 1px;
+    background: linear-gradient(270deg, transparent, var(--accent-amber), transparent);
+    animation: warp-streak-reverse 6s linear infinite;
+}
+@keyframes warp-streak { 0% { left: -100%; } 100% { left: 100%; } }
+@keyframes warp-streak-reverse { 0% { right: -100%; } 100% { right: 100%; } }
+
+.chemical-asteroids { position: absolute; width: 100%; height: 100%; }
+.chemical-asteroids::before {
+    content: ''; position: absolute; top: 40%; left: -50px; width: 50px; height: 50px;
+    background: radial-gradient(circle, var(--accent-orange) 20%, transparent 70%);
+    border-radius: 50%; animation: asteroid-drift 15s ease-in-out infinite;
+    box-shadow: 0 0 20px var(--accent-orange-glow);
+}
+.chemical-asteroids::after {
+    content: ''; position: absolute; bottom: 30%; right: -30px; width: 30px; height: 30px;
+    background: radial-gradient(circle, var(--accent-pink) 30%, transparent 80%);
+    border-radius: 50%; animation: asteroid-drift-reverse 12s ease-in-out infinite;
+    box-shadow: 0 0 15px var(--accent-pink-glow);
+}
+@keyframes asteroid-drift { 0% { transform: translateX(-100px) translateY(0px) rotate(0deg); } 50% { transform: translateX(50vw) translateY(-50px) rotate(180deg); } 100% { transform: translateX(100vw) translateY(0px) rotate(360deg); } }
+@keyframes asteroid-drift-reverse { 0% { transform: translateX(100px) translateY(0px) rotate(0deg); } 50% { transform: translateX(-50vw) translateY(50px) rotate(180deg); } 100% { transform: translateX(-100vw) translateY(0px) rotate(360deg); } }
+
+.animated-planets { position: absolute; width: 100%; height: 100%; }
+.planet { position: absolute; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), var(--accent-blue)); box-shadow: 0 0 20px var(--accent-blue-glow); }
+.planet-1 { width: 80px; height: 80px; top: 15%; right: 10%; animation: planet-orbit 20s linear infinite; }
+.planet-2 { width: 60px; height: 60px; bottom: 20%; left: 15%; animation: planet-orbit-reverse 25s linear infinite; background: radial-gradient(circle at 40% 40%, rgba(255,255,255,0.6), var(--accent-amber)); box-shadow: 0 0 15px var(--accent-amber-glow); }
+.planet-3 { width: 40px; height: 40px; top: 60%; right: 25%; animation: planet-wobble 15s ease-in-out infinite; background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.7), var(--accent-orange)); box-shadow: 0 0 10px var(--accent-orange-glow); }
+@keyframes planet-orbit { 0% { transform: rotate(0deg) translateX(100px) rotate(0deg); } 100% { transform: rotate(360deg) translateX(100px) rotate(-360deg); } }
+@keyframes planet-orbit-reverse { 0% { transform: rotate(360deg) translateX(80px) rotate(0deg); } 100% { transform: rotate(0deg) translateX(80px) rotate(-360deg); } }
+@keyframes planet-wobble { 0%, 100% { transform: translateY(0px) rotate(0deg); } 25% { transform: translateY(-10px) rotate(5deg); } 50% { transform: translateY(0px) rotate(0deg); } 75% { transform: translateY(10px) rotate(-5deg); } }
+
+
+#desktop-area { position: absolute; top: 0; left: 0; width: 100%; height: calc(100% - 80px); overflow: hidden; }
+
+/* WINDOW MANAGER CSS */
+.window {
+    position: absolute;
+    display: flex; flex-direction: column;
+    background: #0f172a; border: 1px solid #1e293b; border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.8), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+    transition: transform 0.1s;
+    resize: both; overflow: hidden;
+}
+.window.focused {
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.9);
+    border-color: rgba(255, 140, 0, 0.4);
+}
+.window-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.5rem 1rem; border-bottom: 1px solid #1e293b;
+    background: #0a0a0f; cursor: grab; border-radius: 12px 12px 0 0;
+}
+.window-header:active { cursor: grabbing; }
+.window-title { font-size: 0.9rem; font-weight: 600; letter-spacing: 1px; color: #b0b0b0; text-transform: uppercase; }
+.window-controls { display: flex; gap: 8px; }
+.win-btn { width: 14px; height: 14px; border-radius: 50%; border: none; cursor: pointer; }
+.win-btn.close { background: #ef4444; }
+.win-btn.close:hover { background: #dc2626; }
+
+.window-content { padding: 1rem; flex-grow: 1; overflow: auto; display: flex; flex-direction: column; }
+
+/* REUSABLE GLASS COMPONENTS */
+.glass-panel { background: #0f172a; border: 1px solid #1e293b; border-radius: 8px; }
+.status-indicator { color: #4ade80; margin-top: 0.5rem; font-size: 0.9rem; }
+.widget-grid { display: grid; }
+
+/* Chat Layout */
+.chat-container { display: flex; flex-direction: column; height: 100%; }
+.chat-history { flex-grow: 1; overflow-y: auto; padding-right: 10px; }
+.message { padding: 0.8rem; border-radius: 8px; background: rgba(0, 0, 0, 0.3); font-size: 0.9rem; }
+.chat-input-area { display: flex; gap: 0.5rem; margin-top: 1rem; }
+
+/* IDE Layout */
+.ide-container { display: flex; height: 100%; gap: 1rem; flex-direction: row; }
+.file-tree { width: 220px; border-right: 1px solid var(--glass-border); padding-right: 1rem; overflow-y: auto; }
+.file-tree ul { list-style: none; }
+.editor-area { flex-grow: 1; display: flex; flex-direction: column; }
+.editor-tabs { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+.tab { padding: 0.3rem 0.8rem; background: rgba(0,0,0,0.3); border-radius: 4px; font-size: 0.8rem; }
+.tab.active { background: var(--accent); color: #000; font-weight: bold; }
+.code-editor { flex-grow: 1; background: rgba(0, 0, 0, 0.6); color: #a78bfa; font-family: 'Fira Code', monospace; font-size: 0.9rem; resize: none; border-radius: 8px; padding: 1rem; }
+
+/* Terminal */
+.terminal-container { background: rgba(0,0,0,0.8); color: #a78bfa; font-family: 'Fira Code', monospace; font-size: 0.9rem; padding: 1rem; border-radius: 8px; }
+
+/* Forms & Inputs */
+input, textarea { user-select: text; -webkit-user-select: text; }
+.glass-input { background: rgba(0, 0, 0, 0.4); border: 1px solid var(--glass-border); color: var(--text-primary); padding: 0.8rem; border-radius: 8px; width: 100%; outline: none; }
+.glass-input:focus { border-color: var(--accent); }
+.glass-btn { background: var(--accent); color: #000; border: none; padding: 0 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; }
+
+/* Dock Navigation */
+.dock { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); backdrop-filter: blur(20px); padding: 0.5rem 1rem; border-radius: 20px; display: flex; gap: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 9999; }
+.dock-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; width: 45px; height: 45px; border-radius: 12px; cursor: pointer; font-size: 1.2rem; transition: all 0.2s; }
+.dock-btn:hover { background: rgba(255,255,255,0.2); transform: translateY(-3px); }

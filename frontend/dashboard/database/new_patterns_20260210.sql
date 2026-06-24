@@ -1,0 +1,18 @@
+-- New patterns pulled from latest Feb 10, 2026 web research on agentic AI advancements, security risks, self-improving systems, and related trends.
+
+INSERT INTO patterns (pattern, response, domain, metadata) VALUES
+('CoCounsel Legal UK', 'Agentic AI solution purpose-built for UK legal professionals with Deep Research on Westlaw Advantage and Practical Law.', 'agentic_ai', '{"company": "Thomson Reuters", "region": "UK", "features": "Deep Research, workflow automation"}'),
+('OpenClaw Exposure Risk', '40,000+ misconfigured OpenClaw AI agent instances exposed publicly, enabling RCE and prompt injection attacks.', 'security', '{"vulnerability": "misconfiguration", "count": "40k+", "tool": "OpenClaw"}'),
+('UiPath WorkFusion Acquisition', 'UiPath acquires WorkFusion to expand agentic AI agents for financial crime compliance and banking.', 'agentic_ai', '{"acquisition": "WorkFusion", "sector": "fintech", "focus": "financial crime"}'),
+('Digits Agentic General Ledger', 'World’s first Agentic General Ledger (AGL) delivering real-time financials and automating month-end close.', 'agentic_ai', '{"product": "AGL", "sector": "accounting", "award": "2026 Top New Product"}'),
+('Google Universal Commerce Protocol', 'UCP enables AI agents to streamline discovery, booking, and transactions in agentic commerce like travel.', 'agentic_ai', '{"protocol": "UCP", "company": "Google", "use": "e-commerce agents"}'),
+('Guard Owl Private Security AI', 'Agentic AI platform bringing autonomous capabilities to private security sector, $3M seed funded.', 'agentic_ai', '{"startup": "Guard Owl", "funding": "$3M", "sector": "security"}'),
+('Agentic AI SaaS Disruption', 'Agentic AI fears cause stock drops like Monday.com -19%, threatening traditional software models.', 'agentic_ai', '{"impact": "disruption", "example": "Monday.com", "trend": "2026"}'),
+('Chemspeed SciY Self-Driving Lab', 'Open Self-Driving Lab platform integrating lab automation, analytics, and AI orchestration.', 'agentic_ai', '{"platform": "SDL", "companies": "Chemspeed/SciY", "domain": "R&D labs"}'),
+('Moltbook Agent Network Vulns', 'AI agent social network Moltbook vulnerable to bot-to-bot prompt injection and data leaks.', 'security', '{"platform": "Moltbook", "issues": "prompt injection, data leaks"}'),
+('Mastercard Agent Suite', 'Agent Suite helps merchants deploy agentic AI for commerce with consulting and support.', 'agentic_ai', '{"company": "Mastercard", "target": "merchants", "launch": "Q2 2026"}'),
+('Databricks Agentic Surge', '327% surge in autonomous AI systems per Databricks report, rise of compound and supervisor agents.', 'agentic_ai', '{"report": "Databricks 2026", "growth": "327%", "systems": "compound AI"}'),
+('Dynatrace Agentic Pulse', '50% agentic AI projects in production, emphasizing observability and human oversight.', 'agentic_ai', '{"report": "Pulse of Agentic AI 2026", "adoption": "50% production"}'),
+('Agentic Engineering', 'Evolution from vibe-coding to agentic engineering where AI autonomously manages codebases.', 'self_improvement', '{"term": "agentic engineering", "evolution": "post vibe-coding"}'),
+('Smart Glasses Agent Hacking', 'Hacking Ray-Ban Meta glasses for AI agent purchases poses major security risks.', 'security', '{"device": "Ray-Ban Meta", "risk": "autonomous purchases", "exploit": "camera access"}'),
+('Alphabet AI Capex Risks', 'Alphabet highlights AI risks: ad business impact, excess capacity from massive infrastructure spend.', 'agentic_ai', '{"company": "Alphabet", "risks": "financial, excess capacity", "debt": "$20B"}');

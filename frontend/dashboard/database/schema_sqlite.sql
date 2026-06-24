@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS patterns (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  pattern TEXT NOT NULL,
+  response TEXT NOT NULL,
+  success_rate REAL DEFAULT 0.5,
+  usage_count INTEGER DEFAULT 0,
+  domain VARCHAR(100),
+  metadata TEXT,
+  last_used DATETIME,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
