@@ -225,6 +225,22 @@
             </div>
         </div>
 
+        <!-- RESOURCE POOL WINDOW -->
+        <div class="window glass-panel" id="win-pool" style="top: 200px; left: 300px; width: 500px; display: none; border-color: rgba(56, 189, 248, 0.5);">
+            <div class="window-header" onmousedown="dragWindow(event, 'win-pool')">
+                <span class="window-title" style="color: #38bdf8;">🌐 UNIFIED RESOURCE POOL</span>
+                <div class="window-controls">
+                    <button class="win-btn close" onclick="toggleWindow('win-pool')"></button>
+                </div>
+            </div>
+            <div class="window-content" style="padding: 15px; font-family: monospace; font-size: 14px; color: #94a3b8;">
+                <h3 style="color: #f8fafc; margin-top:0; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom:5px;">MASTER NODE (127.0.0.1)</h3>
+                <div id="pool-master" style="margin-bottom: 15px;">Polling...</div>
+                
+                <h3 style="color: #facc15; margin-top:0; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom:5px;">WORKER NODE (192.168.68.51)</h3>
+                <div id="pool-worker">Polling...</div>
+            </div>
+        </div>
     </main>
 
     <!-- OS Taskbar (Dock) -->
@@ -236,6 +252,7 @@
         <button onclick="toggleWindow('win-ide')" class="dock-btn" title="File Explorer & IDE">📁</button>
         <button onclick="spawnTerminalWindow()" class="dock-btn" title="Terminal">_</button>
         <button onclick="toggleWindow('win-twin')" class="dock-btn" title="System Diagnostics">📊</button>
+        <button onclick="toggleWindow('win-pool')" class="dock-btn" title="Unified Resource Pool">🌐</button>
     </nav>
 
     <script src="script.js"></script>

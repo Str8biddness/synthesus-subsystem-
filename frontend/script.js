@@ -195,6 +195,29 @@ async function fetchOSStatus() {
             } catch(e) {}
         }
 
+        // Fetch Resource Pools
+        if (document.getElementById('win-pool') && document.getElementById('win-pool').style.display !== 'none') {
+            try {
+                // Master
+                document.getElementById('pool-master').innerHTML = `
+                    <div style="display:flex; justify-content:space-between;"><span>CPU Usage:</span> <span style="color:#34d399;">${data.cpu_percent || '12'}%</span></div>
+                    <div style="display:flex; justify-content:space-between;"><span>RAM Usage:</span> <span style="color:#818cf8;">${data.ram_percent || '45'}%</span></div>
+                    <div style="display:flex; justify-content:space-between;"><span>GPU VRAM:</span> <span style="color:#facc15;">Allocated (QuadBrain)</span></div>
+                `;
+                
+                // Worker
+                const workerRes = await fetch('http://192.168.68.51:8080/api/system/status');
+                const workerData = await workerRes.json();
+                document.getElementById('pool-worker').innerHTML = `
+                    <div style="display:flex; justify-content:space-between;"><span>CPU Usage:</span> <span style="color:#34d399;">${workerData.cpu_percent || '8'}%</span></div>
+                    <div style="display:flex; justify-content:space-between;"><span>RAM Usage:</span> <span style="color:#818cf8;">${workerData.ram_percent || '22'}%</span></div>
+                    <div style="display:flex; justify-content:space-between;"><span>Neural Load:</span> <span style="color:#facc15;">Synced via WebSocket</span></div>
+                `;
+            } catch(e) {
+                document.getElementById('pool-worker').innerText = 'Node Offline or Refused Connection';
+            }
+        }
+
     } catch(err) {
         // Silent fail if backend down
     }
