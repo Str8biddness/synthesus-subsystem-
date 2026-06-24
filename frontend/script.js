@@ -8,8 +8,10 @@ let offsetX = 0, offsetY = 0;
 
 function toggleWindow(id) {
     const win = document.getElementById(id);
+    let displayState = 'none';
     if (win.style.display === 'none') {
         win.style.display = 'flex';
+        displayState = 'flex';
         focusWindow(win);
         
         // Trigger lazy loading
@@ -19,6 +21,15 @@ function toggleWindow(id) {
     } else {
         win.style.display = 'none';
         if (id === 'win-twin' && twinInterval) clearInterval(twinInterval);
+    }
+    
+    // Broadcast to Grid
+    if (window.gridSocket && gridSocket.readyState === WebSocket.OPEN) {
+        gridSocket.send(JSON.stringify({
+            type: 'window_toggle',
+            id: id,
+            display: displayState
+        }));
     }
 }
 
@@ -41,10 +52,37 @@ function dragWindow(e, id) {
     document.addEventListener('mouseup', onMouseUp);
 }
 
+let animationFrameId = null;
+let currentMouseX = 0;
+let currentMouseY = 0;
+
 function onMouseMove(e) {
     if (!isDragging || !currentWindow) return;
-    currentWindow.style.left = (e.clientX - offsetX) + 'px';
-    currentWindow.style.top = (e.clientY - offsetY) + 'px';
+    currentMouseX = e.clientX;
+    currentMouseY = e.clientY;
+    
+    if (!animationFrameId) {
+        animationFrameId = requestAnimationFrame(() => {
+            if (currentWindow) {
+                const newLeft = currentMouseX - offsetX;
+                const newTop = currentMouseY - offsetY;
+                currentWindow.style.left = newLeft + 'px';
+                currentWindow.style.top = newTop + 'px';
+                
+                // Broadcast to Grid Nodes
+                if (gridSocket && gridSocket.readyState === WebSocket.OPEN) {
+                    gridSocket.send(JSON.stringify({
+                        type: 'window_move',
+                        id: currentWindow.id,
+                        left: newLeft,
+                        top: newTop,
+                        zIndex: currentWindow.style.zIndex
+                    }));
+                }
+            }
+            animationFrameId = null;
+        });
+    }
 }
 
 function onMouseUp() {
@@ -403,3 +441,37 @@ async function runUSCL() {
         alert("USCL Execution Failed: " + err.message);
     }
 }
+
+// ==========================================
+// UNIFIED SYSTEM GRID SYNC
+// ==========================================
+window.gridSocket = new WebSocket(`ws://${window.location.host}/grid-state`);
+window.gridSocket.onmessage = (event) => {
+    try {
+        const data = JSON.parse(event.data);
+        if (data.type === 'window_move') {
+            const win = document.getElementById(data.id);
+            if (win) {
+                win.style.left = data.left + 'px';
+                win.style.top = data.top + 'px';
+                win.style.zIndex = data.zIndex;
+            }
+        } else if (data.type === 'window_toggle') {
+            const win = document.getElementById(data.id);
+            if (win) {
+                win.style.display = data.display;
+                if (data.display === 'flex') {
+                    // Trigger lazy load
+                    if (data.id === 'win-ide') fetchIDEFiles();
+                    if (data.id === 'win-twin') startTwinSimulation();
+                }
+            }
+        }
+    } catch (e) {
+        console.error("Grid Sync Error:", e);
+    }
+};
+
+window.gridSocket.onopen = () => {
+    console.log("🌌 CONNECTED TO AIVM GRID LAYER");
+};

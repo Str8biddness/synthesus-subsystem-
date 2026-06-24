@@ -290,3 +290,28 @@ def pty_shell(ws):
 if __name__ == '__main__':
     # Listen on all interfaces to act as the God-Mode backend
     app.run(host='0.0.0.0', port=8080, debug=False, use_reloader=False)
+
+# --- UNIFIED GRID SYNC ---
+grid_clients = set()
+
+@sock.route('/grid-state')
+def grid_state_sync(ws):
+    global grid_clients
+    grid_clients.add(ws)
+    try:
+        while True:
+            data = ws.receive()
+            if data is None:
+                break
+            # Broadcast to all other connected grid nodes
+            for client in list(grid_clients):
+                if client != ws:
+                    try:
+                        client.send(data)
+                    except:
+                        grid_clients.remove(client)
+    except Exception:
+        pass
+    finally:
+        if ws in grid_clients:
+            grid_clients.remove(ws)

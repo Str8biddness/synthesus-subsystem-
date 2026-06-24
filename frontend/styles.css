@@ -5,6 +5,15 @@
     --text-secondary: #94a3b8;
     --accent: #38bdf8;
     --bg-desktop: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+    --bg-space: #0b0c10;
+    --accent-blue: #38bdf8;
+    --accent-blue-glow: rgba(56, 189, 248, 0.5);
+    --accent-amber: #fbbf24;
+    --accent-amber-glow: rgba(251, 191, 36, 0.5);
+    --accent-pink: #f472b6;
+    --accent-pink-glow: rgba(244, 114, 182, 0.5);
+    --accent-orange: #f97316;
+    --accent-orange-glow: rgba(249, 115, 22, 0.5);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -82,10 +91,13 @@ body { font-family: 'Outfit', sans-serif; color: var(--text-primary); overflow: 
 .window {
     position: absolute;
     display: flex; flex-direction: column;
-    background: #0f172a; border: 1px solid #1e293b; border-radius: 12px;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.8), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
-    transition: transform 0.1s;
+    background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s;
     resize: both; overflow: hidden;
+    will-change: transform, left, top;
 }
 .window.focused {
     box-shadow: 0 15px 50px rgba(0, 0, 0, 0.9);
@@ -106,7 +118,7 @@ body { font-family: 'Outfit', sans-serif; color: var(--text-primary); overflow: 
 .window-content { padding: 1rem; flex-grow: 1; overflow: auto; display: flex; flex-direction: column; }
 
 /* REUSABLE GLASS COMPONENTS */
-.glass-panel { background: #0f172a; border: 1px solid #1e293b; border-radius: 8px; }
+.glass-panel { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; backdrop-filter: blur(10px); }
 .status-indicator { color: #4ade80; margin-top: 0.5rem; font-size: 0.9rem; }
 .widget-grid { display: grid; }
 
