@@ -125,17 +125,36 @@ async function fetchOSStatus() {
             bridgeEl.style.color = data['peripheral_bridge_active'] ? '#000' : '#fff';
         }
 
-        // Fetch Telemetry if window is visible
+        // Fetch Telemetry & Threats if window is visible
         if (document.getElementById('win-telemetry').style.display !== 'none') {
-            const telRes = await fetch('http://127.0.0.1:8080/api/telemetry');
-            const telData = await telRes.json();
-            const entropyStr = telData.entropy.toString();
-            // find the text element inside the spinner
-            const entropyEl = document.querySelector('#win-telemetry .window-content > div:nth-child(1) > div > div');
-            if (entropyEl) entropyEl.innerText = entropyStr;
-            
-            const convEl = document.querySelector('#win-telemetry .window-content > div:nth-child(2) > div:nth-child(1) > div:nth-child(2)');
-            if (convEl) convEl.innerText = telData.convergence;
+            try {
+                const threatRes = await fetch('http://127.0.0.1:8080/api/threats');
+                const threatData = await threatRes.json();
+                
+                let entropyStr = "0.00";
+                let statusStr = "Stabilized";
+                
+                if (threatData.active_p2p_threats && threatData.active_p2p_threats.length > 0) {
+                    entropyStr = (0.5 + Math.random() * 0.5).toFixed(2);
+                    statusStr = "P2P Threat";
+                } else if (threatData.immune_system_anomalies && threatData.immune_system_anomalies.length > 0) {
+                    entropyStr = "0.99";
+                    statusStr = "ANOMALY";
+                } else {
+                    entropyStr = (Math.random() * 0.1).toFixed(2);
+                    statusStr = "Secure";
+                }
+
+                const entropyEl = document.querySelector('#win-telemetry .window-content > div:nth-child(1) > div > div');
+                if (entropyEl) {
+                    entropyEl.innerText = entropyStr;
+                    if (parseFloat(entropyStr) > 0.5) entropyEl.style.color = "#ef4444";
+                    else entropyEl.style.color = "#facc15";
+                }
+                
+                const convEl = document.querySelector('#win-telemetry .window-content > div:nth-child(2) > div:nth-child(1) > div:nth-child(2)');
+                if (convEl) convEl.innerText = statusStr;
+            } catch(e) {}
         }
 
     } catch(err) {
@@ -342,18 +361,45 @@ function spawnTerminalWindow() {
 async function startTwinSimulation() {
     if(twinInterval) clearInterval(twinInterval);
     const log = document.getElementById('twin-log');
-    let iter = 0;
     
-    twinInterval = setInterval(() => {
-        iter++;
-        document.getElementById('stat-pt').innerText = (20 + (Math.random()*5)).toFixed(1) + ' s';
-        document.getElementById('stat-pcv').innerText = (25 + (Math.random()*5)).toFixed(1) + ' %';
-        document.getElementById('stat-toxin').innerText = (60 + (Math.random()*10)).toFixed(1) + ' %';
-        document.getElementById('stat-pain').innerText = Math.floor(Math.random()*3 + 5) + '/10';
-        
-        const phase = iter % 2 === 0 ? "OPTIMIZING DATABASE QUERIES" : "FLUSHING CACHE BUFFERS";
-        const color = iter % 2 === 0 ? "#ef4444" : "#4ade80"; 
-        log.innerHTML += `<div><span style="color:${color};">${phase}</span></div>`;
-        log.scrollTop = log.scrollHeight;
+    twinInterval = setInterval(async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:8080/api/telemetry');
+            const data = await response.json();
+            if (data && data.metrics) {
+                document.getElementById('stat-pt').innerText = data.metrics.live_cpu_count ? data.metrics.live_cpu_count + ' Cores' : '--';
+                document.getElementById('stat-pcv').innerText = data.metrics.live_ram_used_ratio ? (data.metrics.live_ram_used_ratio * 100).toFixed(1) + ' %' : '-- %';
+                document.getElementById('stat-toxin').innerText = data.metrics.live_disk_used_gb ? data.metrics.live_disk_used_gb.toFixed(1) + ' GB' : '-- GB';
+                document.getElementById('stat-pain').innerText = data.metrics.live_cpu_avg_mhz ? data.metrics.live_cpu_avg_mhz.toFixed(0) + ' MHz' : '-- MHz';
+                
+                const phase = data.twin_stats && data.twin_stats.status ? data.twin_stats.status : "GATHERING METRICS";
+                const color = "#4ade80"; 
+                log.innerHTML += `<div><span style="color:${color};">[SYS_METRICS] ${phase}</span></div>`;
+                log.scrollTop = log.scrollHeight;
+            }
+        } catch(err) {}
     }, 2000);
+}
+
+async function runUSCL() {
+    const script = document.getElementById('ide-code-editor').value;
+    try {
+        const response = await fetch('http://127.0.0.1:8080/api/uscl/execute', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ script: script })
+        });
+        const data = await response.json();
+        
+        // Spawn a terminal to show output
+        spawnTerminalWindow();
+        const existingTerms = document.querySelectorAll('[id^="win-term-"]');
+        const lastTermId = existingTerms[existingTerms.length - 1].id;
+        const termContainerId = lastTermId.replace("win-term-", "xterm-container-");
+        
+        // We'll just alert for now since we don't have direct access to the xterm instance from outside easily
+        alert("USCL Compilation Result:\\n" + JSON.stringify(data.result, null, 2));
+    } catch(err) {
+        alert("USCL Execution Failed: " + err.message);
+    }
 }

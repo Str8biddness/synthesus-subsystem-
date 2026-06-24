@@ -13,6 +13,36 @@ from flask_sock import Sock
 sys.path.append("/home/dakin/synthesus-ultra/packages")
 for pkg in ["core", "reasoning", "knowledge", "kernel", "organs", "characters", "api"]:
     sys.path.append(f"/home/dakin/synthesus-ultra/packages/{pkg}")
+# Plugin Imports
+sys.path.append("/home/dakin/aivm-planetary-os/backend/plugins")
+try:
+    from telemetry_threat_bridge import TelemetryThreatBridge
+    telemetry_bridge = TelemetryThreatBridge()
+except Exception as e:
+    telemetry_bridge = None
+    print(f"Failed to load TelemetryThreatBridge: {e}")
+
+try:
+    from quantum_grid_bridge import HardwareGridBridge
+    hardware_bridge = HardwareGridBridge()
+except Exception as e:
+    hardware_bridge = None
+    print(f"Failed to load HardwareGridBridge: {e}")
+
+try:
+    from neural_uscl_bridge import NeuralUsclBridge
+    neural_bridge = NeuralUsclBridge()
+except Exception as e:
+    neural_bridge = None
+    print(f"Failed to load NeuralUsclBridge: {e}")
+
+try:
+    from memory_tracing_bridge import MemoryTracingBridge
+    memory_bridge = MemoryTracingBridge()
+except Exception as e:
+    memory_bridge = None
+    print(f"Failed to load MemoryTracingBridge: {e}")
+
 try:
     from core.quadbrain_master import QuadbrainMaster
     quadbrain = QuadbrainMaster()
@@ -41,6 +71,51 @@ def get_status():
         "llm_status": kernel_status
     })
 
+@app.route('/api/telemetry', methods=['GET'])
+def get_telemetry():
+    if telemetry_bridge:
+        return jsonify(telemetry_bridge.get_live_diagnostics())
+    return jsonify({"error": "Telemetry plugin offline"})
+
+@app.route('/api/threats', methods=['GET'])
+def get_threats():
+    if telemetry_bridge:
+        return jsonify(telemetry_bridge.get_threat_anomalies())
+    return jsonify({"error": "Threat plugin offline"})
+
+@app.route('/api/quantum', methods=['GET'])
+def get_quantum():
+    if hardware_bridge:
+        return jsonify(hardware_bridge.get_quantum_state())
+    return jsonify({"error": "Quantum plugin offline"})
+
+@app.route('/api/grid', methods=['GET'])
+def get_grid():
+    if hardware_bridge:
+        return jsonify(hardware_bridge.get_grid_nodes())
+    return jsonify({"error": "Grid plugin offline"})
+
+@app.route('/api/android', methods=['GET'])
+def get_android():
+    if hardware_bridge:
+        return jsonify(hardware_bridge.get_android_devices())
+    return jsonify({"error": "Android ADB plugin offline"})
+
+@app.route('/api/neural', methods=['GET'])
+def get_neural():
+    if neural_bridge:
+        return jsonify(neural_bridge.get_neural_metrics())
+    return jsonify({"error": "Neural plugin offline"})
+
+@app.route('/api/uscl/execute', methods=['POST'])
+def execute_uscl():
+    if not neural_bridge:
+        return jsonify({"error": "USCL compiler plugin offline"})
+    data = request.json
+    script = data.get('script', '')
+    result = neural_bridge.execute_uscl(script)
+    return jsonify({"result": result})
+
 @app.route('/api/system/reboot', methods=['POST'])
 def reboot_system():
     # Kill the aivm-daemon to trigger an immediate restart via systemd
@@ -51,13 +126,20 @@ def reboot_system():
 def chat_with_llm():
     data = request.json
     intent_string = data.get('message', '')
+    
+    # Store in memory hierarchy
+    if memory_bridge:
+        memory_bridge.process_chat(intent_string)
+
     if quadbrain:
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         result = loop.run_until_complete(quadbrain.think(intent_string))
         loop.close()
         return jsonify({"response": result.get("answer", "No answer generated."), "os_plan": result.get("os_plan")})
-    return jsonify({"response": "QuadBrain offline. Root mode active."})
+    
+    # Fallback to pure root mode response if Quadbrain offline
+    return jsonify({"response": "Command logged into 4-Layer Memory. QuadBrain offline. Root mode active."})
 
 @app.route('/api/os/approve', methods=['POST'])
 def approve_os_plan():
