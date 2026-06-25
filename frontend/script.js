@@ -118,7 +118,7 @@ let twinInterval;
 
 async function checkSystemStatus() {
     try {
-        const response = await fetch('http://127.0.0.1:8080/api/system/status');
+        const response = await fetch('http://' + window.location.host + '/api/system/status');
         const data = await response.json();
         
         document.getElementById('sys-drive').textContent = data["3way_drive_active"] ? "● Storage Array Mounted" : "○ Storage Array Offline";
@@ -141,7 +141,7 @@ async function checkSystemStatus() {
 async function rebootSubsystem() {
     if(confirm("Are you sure you want to hard-reboot the AIVM Daemon? This will kill the Subsystem and require a manual restart of the UI.")) {
         try {
-            await fetch('http://127.0.0.1:8080/api/system/reboot', { method: 'POST' });
+            await fetch('http://' + window.location.host + '/api/system/reboot', { method: 'POST' });
         } catch(err) {}
         document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:20%'>SUBSYSTEM REBOOTING...<br>Please close this window and restart the AIVM CLI.</h1>";
     }
@@ -149,7 +149,7 @@ async function rebootSubsystem() {
 
 async function fetchOSStatus() {
     try {
-        const response = await fetch('http://127.0.0.1:8080/api/system/status');
+        const response = await fetch('http://' + window.location.host + '/api/system/status');
         const data = await response.json();
         const driveEl = document.getElementById('sys-drive');
         if(driveEl) {
@@ -166,7 +166,7 @@ async function fetchOSStatus() {
         // Fetch Telemetry & Threats if window is visible
         if (document.getElementById('win-telemetry').style.display !== 'none') {
             try {
-                const threatRes = await fetch('http://127.0.0.1:8080/api/threats');
+                const threatRes = await fetch('http://' + window.location.host + '/api/threats');
                 const threatData = await threatRes.json();
                 
                 let entropyStr = "0.00";
@@ -228,7 +228,7 @@ async function fetchOSStatus() {
 // ==========================================
 async function fetchIDEFiles() {
     try {
-        const response = await fetch('http://127.0.0.1:8080/api/ide/files');
+        const response = await fetch('http://' + window.location.host + '/api/ide/files');
         const treeData = await response.json();
         document.getElementById('ide-file-tree').innerHTML = '<ul><li><span class="folder" style="color: #38bdf8;">🌐 Storage Array</span>' + buildTreeHTML(treeData) + '</li></ul>';
     } catch(err) {
@@ -264,7 +264,7 @@ async function sendChatMessage() {
     chatHistory.scrollTop = chatHistory.scrollHeight;
     
     try {
-        const response = await fetch('http://127.0.0.1:8080/api/chat', {
+        const response = await fetch('http://' + window.location.host + '/api/chat', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: message })
         });
@@ -312,7 +312,7 @@ async function approveOSPlan(planStr) {
     }
     
     try {
-        const response = await fetch('http://127.0.0.1:8080/api/os/approve', {
+        const response = await fetch('http://' + window.location.host + '/api/os/approve', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(plan)
         });
@@ -387,7 +387,7 @@ function spawnTerminalWindow() {
     
     let ptySocket;
     function connectPTY() {
-        ptySocket = new WebSocket(`ws://127.0.0.1:8080/pty?session_id=${sessionId}`);
+        ptySocket = new WebSocket(`ws://' + window.location.host + '/pty?session_id=${sessionId}`);
         ptySocket.onopen = () => term.write('\\r\\n[Connected to System PTY (Multi-Session)]\\r\\n');
         ptySocket.onmessage = (e) => term.write(e.data);
         ptySocket.onclose = () => {
@@ -406,7 +406,7 @@ function spawnTerminalWindow() {
     });
     
     term.onResize((size) => {
-        fetch('http://127.0.0.1:8080/api/terminal/resize', {
+        fetch('http://' + window.location.host + '/api/terminal/resize', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ session_id: sessionId, cols: size.cols, rows: size.rows })
         }).catch(() => {});
@@ -425,7 +425,7 @@ async function startTwinSimulation() {
     
     twinInterval = setInterval(async () => {
         try {
-            const response = await fetch('http://127.0.0.1:8080/api/telemetry');
+            const response = await fetch('http://' + window.location.host + '/api/telemetry');
             const data = await response.json();
             if (data && data.metrics) {
                 document.getElementById('stat-pt').innerText = data.metrics.live_cpu_count ? data.metrics.live_cpu_count + ' Cores' : '--';
@@ -445,7 +445,7 @@ async function startTwinSimulation() {
 async function runUSCL() {
     const script = document.getElementById('ide-code-editor').value;
     try {
-        const response = await fetch('http://127.0.0.1:8080/api/uscl/execute', {
+        const response = await fetch('http://' + window.location.host + '/api/uscl/execute', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ script: script })
