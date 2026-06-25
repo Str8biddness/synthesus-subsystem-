@@ -472,6 +472,25 @@ window.gridSocket = new WebSocket(`ws://${window.location.host}/grid-state`);
 window.gridSocket.onmessage = (event) => {
     try {
         const data = JSON.parse(event.data);
+        const isWorker = new URLSearchParams(window.location.search).get("mode") === "worker";
+        if (isWorker) {
+            if (data.type === "virtual_mouse") {
+                const cursor = document.getElementById("virtual-cursor");
+                if (cursor) {
+                    cursor.style.display = "block";
+                    cursor.style.left = (data.x - window.innerWidth) + "px";
+                    cursor.style.top = data.y + "px";
+                }
+            }
+            if (data.type === "virtual_hide") {
+                const cursor = document.getElementById("virtual-cursor");
+                if (cursor) cursor.style.display = "none";
+            }
+            if (data.type === "virtual_mousedown") {
+                let el = document.elementFromPoint(data.x - window.innerWidth, data.y);
+                if (el) el.click();
+            }
+        }
         if (data.type === 'window_move') {
             const win = document.getElementById(data.id);
             if (win) {
@@ -516,5 +535,87 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dock) dock.style.display = 'none';
         
         console.log("🌌 SSI Resource Node Mode Activated. Contiguous Desktop established.");
+    }
+});
+
+// ==========================================
+// VIRTUAL PERIPHERAL BRIDGE (Browser-Native KVM)
+// ==========================================
+let virtualX = 0;
+let virtualY = 0;
+let isPointerLocked = false;
+let screenWidth = window.innerWidth;
+
+const cursorEl = document.createElement("div");
+cursorEl.id = "virtual-cursor";
+cursorEl.style.position = "fixed";
+cursorEl.style.width = "24px";
+cursorEl.style.height = "24px";
+cursorEl.style.background = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='white' stroke='black' stroke-width='1.5'%3E%3Cpath d='M3 3l7 19 3.5-7.5L21 11z'/%3E%3C/svg%3E\") no-repeat";
+cursorEl.style.backgroundSize = "contain";
+cursorEl.style.zIndex = "999999";
+cursorEl.style.pointerEvents = "none";
+cursorEl.style.display = "none";
+document.body.appendChild(cursorEl);
+
+document.addEventListener("DOMContentLoaded", () => {
+    const isWorker = new URLSearchParams(window.location.search).get("mode") === "worker";
+    if (!isWorker) {
+        const hopZone = document.createElement("div");
+        hopZone.style.position = "fixed";
+        hopZone.style.right = "0";
+        hopZone.style.top = "0";
+        hopZone.style.width = "20px";
+        hopZone.style.height = "100%";
+        hopZone.style.background = "linear-gradient(90deg, rgba(56,189,248,0) 0%, rgba(56,189,248,0.3) 100%)";
+        hopZone.style.cursor = "e-resize";
+        hopZone.style.zIndex = "999998";
+        hopZone.title = "Click edge to hop to Resource Node";
+        hopZone.onclick = () => document.body.requestPointerLock();
+        document.body.appendChild(hopZone);
+    }
+});
+
+document.addEventListener("pointerlockchange", () => {
+    isPointerLocked = (document.pointerLockElement === document.body);
+    if (!isPointerLocked) {
+        virtualX = screenWidth - 30;
+        if(window.gridSocket && window.gridSocket.readyState === WebSocket.OPEN) {
+            window.gridSocket.send(JSON.stringify({ type: "virtual_hide" }));
+        }
+    } else {
+        virtualX = screenWidth + 1;
+    }
+});
+
+document.addEventListener("mousemove", (e) => {
+    const isWorker = new URLSearchParams(window.location.search).get("mode") === "worker";
+    if (isWorker) return; 
+    
+    if (isPointerLocked) {
+        virtualX += e.movementX;
+        virtualY += e.movementY;
+        
+        if (virtualY < 0) virtualY = 0;
+        if (virtualY > window.innerHeight) virtualY = window.innerHeight;
+        if (virtualX > screenWidth * 2) virtualX = screenWidth * 2;
+        
+        if (virtualX <= screenWidth) {
+            document.exitPointerLock();
+            return;
+        }
+        
+        if(window.gridSocket && window.gridSocket.readyState === WebSocket.OPEN) {
+            window.gridSocket.send(JSON.stringify({ type: "virtual_mouse", x: virtualX, y: virtualY }));
+        }
+    } else {
+        virtualX = e.clientX;
+        virtualY = e.clientY;
+    }
+});
+
+document.addEventListener("mousedown", (e) => {
+    if (isPointerLocked && window.gridSocket && window.gridSocket.readyState === WebSocket.OPEN) {
+        window.gridSocket.send(JSON.stringify({ type: "virtual_mousedown", x: virtualX, y: virtualY }));
     }
 });
