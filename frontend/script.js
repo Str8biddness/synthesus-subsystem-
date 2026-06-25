@@ -498,3 +498,23 @@ window.gridSocket.onmessage = (event) => {
 window.gridSocket.onopen = () => {
     console.log("🌌 CONNECTED TO AIVM GRID LAYER");
 };
+
+// ==========================================
+// SSI CONTIGUOUS DESKTOP EXTENSION
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('mode') === 'worker') {
+        // Shift entire UI to the left by the width of the Master monitor
+        // so this monitor acts as the right half of the God-Mode SOS.
+        document.body.style.marginLeft = "-1920px";
+        document.body.style.width = "3840px";
+        document.body.style.overflow = "hidden";
+        
+        // Hide the local dock on the worker node, as the master has the dock
+        const dock = document.querySelector('.dock');
+        if (dock) dock.style.display = 'none';
+        
+        console.log("🌌 SSI Resource Node Mode Activated. Contiguous Desktop established.");
+    }
+});

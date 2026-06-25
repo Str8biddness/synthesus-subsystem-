@@ -1,0 +1,13 @@
+#!/bin/bash
+echo "🌌 AIVM Planetary OS - Resource Node Extension 🌌"
+MASTER_IP="${1:-192.168.68.56}"
+
+echo "🔄 Connecting to Master Node at $MASTER_IP..."
+# Restart local daemon as worker (if applicable)
+systemctl restart aivm-daemon 2>/dev/null || true
+
+echo "📺 Launching Contiguous SOS Desktop..."
+export DISPLAY=:0
+google-chrome --app="http://$MASTER_IP:8080/?mode=worker" --start-fullscreen &
+
+echo "✨ Merged into God-Mode Cluster as Resource Node."
