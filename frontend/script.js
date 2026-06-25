@@ -387,7 +387,7 @@ function spawnTerminalWindow() {
     
     let ptySocket;
     function connectPTY() {
-        ptySocket = new WebSocket(`ws://' + window.location.host + '/pty?session_id=${sessionId}`);
+        ptySocket = new WebSocket(`ws://${window.location.host}/pty?session_id=${sessionId}`);
         ptySocket.onopen = () => term.write('\\r\\n[Connected to System PTY (Multi-Session)]\\r\\n');
         ptySocket.onmessage = (e) => term.write(e.data);
         ptySocket.onclose = () => {
