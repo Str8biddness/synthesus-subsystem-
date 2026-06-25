@@ -478,7 +478,7 @@ window.gridSocket.onmessage = (event) => {
                 const cursor = document.getElementById("virtual-cursor");
                 if (cursor) {
                     cursor.style.display = "block";
-                    cursor.style.left = (data.x - window.innerWidth) + "px";
+                    cursor.style.left = data.x + "px";
                     cursor.style.top = data.y + "px";
                 }
             }
@@ -548,7 +548,7 @@ let screenWidth = window.innerWidth;
 
 const cursorEl = document.createElement("div");
 cursorEl.id = "virtual-cursor";
-cursorEl.style.position = "fixed";
+cursorEl.style.position = "absolute";
 cursorEl.style.width = "24px";
 cursorEl.style.height = "24px";
 cursorEl.style.background = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='white' stroke='black' stroke-width='1.5'%3E%3Cpath d='M3 3l7 19 3.5-7.5L21 11z'/%3E%3C/svg%3E\") no-repeat";
@@ -576,6 +576,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+document.addEventListener("pointerlockerror", () => {
+    alert("Browser blocked the mouse edge-hop! Ensure you are clicking the edge directly.");
+});
+
+let lastRealY = window.innerHeight / 2;
+
 document.addEventListener("pointerlockchange", () => {
     isPointerLocked = (document.pointerLockElement === document.body);
     if (!isPointerLocked) {
@@ -585,6 +591,7 @@ document.addEventListener("pointerlockchange", () => {
         }
     } else {
         virtualX = screenWidth + 1;
+        virtualY = lastRealY; // Start at the height the mouse was at
     }
 });
 
@@ -611,6 +618,7 @@ document.addEventListener("mousemove", (e) => {
     } else {
         virtualX = e.clientX;
         virtualY = e.clientY;
+        lastRealY = e.clientY;
     }
 });
 
