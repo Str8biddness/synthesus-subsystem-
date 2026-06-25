@@ -8,6 +8,15 @@ systemctl restart aivm-daemon 2>/dev/null || true
 
 echo "📺 Launching Contiguous SOS Desktop..."
 export DISPLAY=:0
-google-chrome --app="http://$MASTER_IP:8080/?mode=worker" --start-fullscreen &
+
+if command -v google-chrome &> /dev/null; then
+    google-chrome --app="http://$MASTER_IP:8080/?mode=worker" --start-fullscreen &
+elif command -v chromium &> /dev/null; then
+    chromium --app="http://$MASTER_IP:8080/?mode=worker" --start-fullscreen &
+elif command -v firefox &> /dev/null; then
+    firefox -kiosk "http://$MASTER_IP:8080/?mode=worker" &
+else
+    xdg-open "http://$MASTER_IP:8080/?mode=worker" &
+fi
 
 echo "✨ Merged into God-Mode Cluster as Resource Node."
