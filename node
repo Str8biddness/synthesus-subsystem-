@@ -1,7 +1,12 @@
 #!/bin/bash
 echo "🌌 AIVM Planetary OS - Resource Node Extension 🌌"
-MASTER_IP="${1:-192.168.68.56}"
-NODE_INDEX="${2:-1}"
+if [[ "$1" == *.* ]]; then
+    MASTER_IP="$1"
+    NODE_INDEX="${2:-1}"
+else
+    MASTER_IP="192.168.68.56"
+    NODE_INDEX="${1:-1}"
+fi
 
 echo "🔄 Connecting to Master Node at $MASTER_IP..."
 # Restart local daemon as worker (if applicable)

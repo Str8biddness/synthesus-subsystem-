@@ -530,8 +530,14 @@ document.addEventListener('DOMContentLoaded', () => {
         let offset = nodeIndex * 1920;
         let totalWidth = (nodeIndex + 1) * 1920;
         
-        document.body.style.marginLeft = `-${offset}px`;
-        document.body.style.width = `${totalWidth}px`;
+        const desktopArea = document.getElementById("desktop-area");
+        if (desktopArea) {
+            desktopArea.style.position = "absolute";
+            desktopArea.style.left = `-${offset}px`;
+            desktopArea.style.width = `${totalWidth}px`;
+            desktopArea.style.height = "100vh";
+        }
+        
         document.body.style.overflow = "hidden";
         
         // Hide the local dock on the worker node, as the master has the dock
