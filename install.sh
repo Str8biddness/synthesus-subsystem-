@@ -32,10 +32,6 @@ EOF
 mkdir -p /opt/synthesus/sos_daemon
 cp backend/aivm_core_daemon.py /opt/synthesus/sos_daemon/
 
-echo "🛠️ Compiling Peripheral Bridge..."
-g++ backend/cluster_node.cpp -o $(pwd)/cluster_node
-chmod +x $(pwd)/cluster_node
-
 systemctl daemon-reload
 systemctl enable aivm-daemon.service
 systemctl restart aivm-daemon.service

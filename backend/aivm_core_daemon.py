@@ -292,42 +292,18 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=False, use_reloader=False)
 
 # --- UNIFIED GRID SYNC ---
-import socket as udp_socket
-import json
-
 grid_clients = set()
 
 @sock.route('/grid-state')
 def grid_state_sync(ws):
     global grid_clients
     grid_clients.add(ws)
-    udp_sock = udp_socket.socket(udp_socket.AF_INET, udp_socket.SOCK_DGRAM)
     try:
         while True:
             data = ws.receive()
             if data is None:
                 break
                 
-            # Intercept KVM hardware events and send via UDP to worker nodes
-            try:
-                msg = json.loads(data)
-                if msg.get("type") == "virtual_mouse_rel":
-                    udp_msg = f"MOUSE_SYNC|X:{msg.get('dx', 0)}|Y:{msg.get('dy', 0)}".encode()
-                elif msg.get("type") == "virtual_mousedown":
-                    udp_msg = f"MOUSE_CLICK|BUTTON:1".encode()
-                else:
-                    udp_msg = None
-                    
-                if udp_msg:
-                    for client in list(grid_clients):
-                        if client != ws:
-                            # Forward UDP packet to the worker's IP
-                            client_ip = client.environ.get('REMOTE_ADDR')
-                            if client_ip:
-                                udp_sock.sendto(udp_msg, (client_ip, 7878))
-            except Exception as e:
-                pass
-
             # Broadcast WebSocket JSON to all other connected grid nodes
             for client in list(grid_clients):
                 if client != ws:
@@ -340,4 +316,3 @@ def grid_state_sync(ws):
     finally:
         if ws in grid_clients:
             grid_clients.remove(ws)
-        udp_sock.close()
