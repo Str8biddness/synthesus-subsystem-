@@ -468,57 +468,67 @@ async function runUSCL() {
 // ==========================================
 // UNIFIED SYSTEM GRID SYNC
 // ==========================================
-window.gridSocket = new WebSocket(`ws://${window.location.host}/grid-state`);
-window.gridSocket.onmessage = (event) => {
-    try {
-        const data = JSON.parse(event.data);
-        const isWorker = new URLSearchParams(window.location.search).get("mode") === "worker";
-        if (isWorker) {
-            if (data.type === "virtual_mouse") {
-                const cursor = document.getElementById("virtual-cursor");
-                if (cursor) {
-                    cursor.style.display = "block";
-                    cursor.style.left = data.x + "px";
-                    cursor.style.top = data.y + "px";
+function connectGridSocket() {
+    window.gridSocket = new WebSocket(`ws://${window.location.host}/grid-state`);
+    window.gridSocket.onmessage = (event) => {
+        try {
+            const data = JSON.parse(event.data);
+            const isWorker = new URLSearchParams(window.location.search).get("mode") === "worker";
+            if (isWorker) {
+                if (data.type === "virtual_mouse") {
+                    const cursor = document.getElementById("virtual-cursor");
+                    if (cursor) {
+                        cursor.style.display = "block";
+                        let nodeIndex = parseInt(new URLSearchParams(window.location.search).get('node_index') || "1");
+                        const viewportX = data.x - (nodeIndex * window.innerWidth);
+                        cursor.style.left = viewportX + "px";
+                        cursor.style.top = data.y + "px";
+                    }
+                }
+                if (data.type === "virtual_hide") {
+                    const cursor = document.getElementById("virtual-cursor");
+                    if (cursor) cursor.style.display = "none";
+                }
+                if (data.type === "virtual_mousedown") {
+                    let nodeIndex = parseInt(new URLSearchParams(window.location.search).get('node_index') || "1");
+                    const viewportX = data.x - (nodeIndex * window.innerWidth);
+                    const el = document.elementFromPoint(viewportX, data.y);
+                    if (el) el.click();
                 }
             }
-            if (data.type === "virtual_hide") {
-                const cursor = document.getElementById("virtual-cursor");
-                if (cursor) cursor.style.display = "none";
-            }
-            if (data.type === "virtual_mousedown") {
-                let nodeIndex = parseInt(new URLSearchParams(window.location.search).get('node_index') || "1");
-                const viewportX = data.x - (nodeIndex * window.innerWidth);
-                const el = document.elementFromPoint(viewportX, data.y);
-                if (el) el.click();
-            }
-        }
-        if (data.type === 'window_move') {
-            const win = document.getElementById(data.id);
-            if (win) {
-                win.style.left = data.left + 'px';
-                win.style.top = data.top + 'px';
-                win.style.zIndex = data.zIndex;
-            }
-        } else if (data.type === 'window_toggle') {
-            const win = document.getElementById(data.id);
-            if (win) {
-                win.style.display = data.display;
-                if (data.display === 'flex') {
-                    // Trigger lazy load
-                    if (data.id === 'win-ide') fetchIDEFiles();
-                    if (data.id === 'win-twin') startTwinSimulation();
+            if (data.type === 'window_move') {
+                const win = document.getElementById(data.id);
+                if (win) {
+                    win.style.left = data.left + 'px';
+                    win.style.top = data.top + 'px';
+                    win.style.zIndex = data.zIndex;
+                }
+            } else if (data.type === 'window_toggle') {
+                const win = document.getElementById(data.id);
+                if (win) {
+                    win.style.display = data.display;
+                    if (data.display === 'flex') {
+                        // Trigger lazy load
+                        if (data.id === 'win-ide') fetchIDEFiles();
+                        if (data.id === 'win-twin') startTwinSimulation();
+                    }
                 }
             }
+        } catch (e) {
+            console.error("Grid Sync Error:", e);
         }
-    } catch (e) {
-        console.error("Grid Sync Error:", e);
-    }
-};
+    };
 
-window.gridSocket.onopen = () => {
-    console.log("🌌 CONNECTED TO AIVM GRID LAYER");
-};
+    window.gridSocket.onopen = () => {
+        console.log("🌌 CONNECTED TO AIVM GRID LAYER");
+    };
+    
+    window.gridSocket.onclose = () => {
+        console.log("GridSocket disconnected. Reconnecting in 2s...");
+        setTimeout(connectGridSocket, 2000);
+    };
+}
+connectGridSocket();
 
 // ==========================================
 // SSI CONTIGUOUS DESKTOP EXTENSION
