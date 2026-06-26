@@ -10,7 +10,7 @@ fi
 
 echo "📦 Installing Dependencies..."
 apt-get update -y
-apt-get install -y python3-pip python3-venv git
+apt-get install -y python3-pip python3-venv git g++ xdotool
 pip3 install flask flask-sock psutil websockets --break-system-packages
 
 echo "🔧 Setting up the AIVM Daemon..."
@@ -31,6 +31,10 @@ EOF
 
 mkdir -p /opt/synthesus/sos_daemon
 cp backend/aivm_core_daemon.py /opt/synthesus/sos_daemon/
+
+echo "🛠️ Compiling Peripheral Bridge..."
+g++ backend/cluster_node.cpp -o /opt/synthesus/cluster_node
+chmod +x /opt/synthesus/cluster_node
 
 systemctl daemon-reload
 systemctl enable aivm-daemon.service

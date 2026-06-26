@@ -9,6 +9,13 @@ systemctl restart aivm-daemon 2>/dev/null || true
 echo "📺 Launching Contiguous SOS Desktop..."
 export DISPLAY=:0
 
+# 🚀 Start Peripheral Sync Listener (Kill any existing instance first)
+pkill -f cluster_node
+if [ -f "/opt/synthesus/cluster_node" ]; then
+    nohup /opt/synthesus/cluster_node > /tmp/cluster_node.log 2>&1 &
+    echo "📡 Native Hardware Peripheral Listener Active on Port 7878"
+fi
+
 if command -v google-chrome &> /dev/null; then
     google-chrome --app="http://$MASTER_IP:8080/?mode=worker" --start-fullscreen &
 elif command -v chromium &> /dev/null; then
