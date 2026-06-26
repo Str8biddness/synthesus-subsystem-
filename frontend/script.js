@@ -617,7 +617,18 @@ document.addEventListener("mousemove", (e) => {
         }
         
         if(window.gridSocket && window.gridSocket.readyState === WebSocket.OPEN) {
-            window.gridSocket.send(JSON.stringify({ type: "virtual_mouse", x: virtualX, y: virtualY }));
+            window.gridSocket.send(JSON.stringify({ 
+                type: "virtual_mouse", 
+                x: virtualX, 
+                y: virtualY 
+            }));
+            
+            // Send relative UDP Native KVM packet to the daemon
+            window.gridSocket.send(JSON.stringify({
+                type: "virtual_mouse_rel",
+                dx: e.movementX,
+                dy: e.movementY
+            }));
         }
     } else {
         virtualX = e.clientX;
