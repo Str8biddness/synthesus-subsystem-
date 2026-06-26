@@ -1,27 +1,46 @@
 #!/bin/bash
-# install.sh - Deploys the AIVM Planetary OS Subsystem
-if [ "$EUID" -ne 0 ]; then 
-  echo "Please run as root (sudo ./install.sh)"
+# AIVM Planetary OS - Automated Deployment Script
+
+echo "🌌 Initializing AIVM Planetary OS Installation..."
+
+if [ "$EUID" -ne 0 ]; then
+  echo "❌ Please run as root (sudo ./install.sh)"
   exit 1
 fi
 
-echo "Installing AIVM Planetary OS Subsystem..."
+echo "📦 Installing Dependencies..."
+apt-get update -y
+apt-get install -y python3-pip python3-venv git
+pip3 install flask flask-sock psutil websockets --break-system-packages
 
-# 1. Update Frontend
-echo "Deploying Frontend to /home/dakin/Synthesus_Desktop_Env..."
-rm -rf /home/dakin/Synthesus_Desktop_Env
-cp -r ./frontend /home/dakin/Synthesus_Desktop_Env
-chown -R dakin:dakin /home/dakin/Synthesus_Desktop_Env
+echo "🔧 Setting up the AIVM Daemon..."
+cat << 'EOF' > /etc/systemd/system/aivm-daemon.service
+[Unit]
+Description=AIVM Planetary OS Root Daemon
+After=network.target
 
-# 2. Update Backend
-echo "Deploying Backend to /opt/synthesus/sos_daemon..."
+[Service]
+ExecStart=/usr/bin/python3 /opt/synthesus/sos_daemon/aivm_core_daemon.py
+WorkingDirectory=/opt/synthesus/sos_daemon
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
 mkdir -p /opt/synthesus/sos_daemon
-cp ./backend/aivm_core_daemon.py /opt/synthesus/sos_daemon/aivm_core_daemon.py
-chown -R root:root /opt/synthesus/sos_daemon/
+cp backend/aivm_core_daemon.py /opt/synthesus/sos_daemon/
 
-# 3. Restart Daemon
-echo "Restarting aivm-daemon service..."
 systemctl daemon-reload
-systemctl restart aivm-daemon
+systemctl enable aivm-daemon.service
+systemctl restart aivm-daemon.service
 
-echo "Installation complete. Backend daemon restarted successfully."
+echo "🖥️ Setting up the UI..."
+chmod +x node
+ln -sf $(pwd)/node /usr/local/bin/node
+
+echo "✅ AIVM Planetary OS Installation Complete!"
+echo "To access the God-Mode Subsystem locally, open a browser and navigate to:"
+echo "👉 http://127.0.0.1:8080"
+echo "To link a Resource Node, go to your second machine, clone this repo, and type: node"
