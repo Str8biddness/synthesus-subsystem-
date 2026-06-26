@@ -487,7 +487,9 @@ window.gridSocket.onmessage = (event) => {
                 if (cursor) cursor.style.display = "none";
             }
             if (data.type === "virtual_mousedown") {
-                let el = document.elementFromPoint(data.x - window.innerWidth, data.y);
+                let nodeIndex = parseInt(new URLSearchParams(window.location.search).get('node_index') || "1");
+                const viewportX = data.x - (nodeIndex * window.innerWidth);
+                const el = document.elementFromPoint(viewportX, data.y);
                 if (el) el.click();
             }
         }
@@ -556,33 +558,49 @@ let virtualY = 0;
 let isPointerLocked = false;
 let screenWidth = window.innerWidth;
 
-const cursorEl = document.createElement("div");
-cursorEl.id = "virtual-cursor";
-cursorEl.style.position = "absolute";
-cursorEl.style.width = "24px";
-cursorEl.style.height = "24px";
-cursorEl.style.background = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='white' stroke='black' stroke-width='1.5'%3E%3Cpath d='M3 3l7 19 3.5-7.5L21 11z'/%3E%3C/svg%3E\") no-repeat";
-cursorEl.style.backgroundSize = "contain";
-cursorEl.style.zIndex = "999999";
-cursorEl.style.pointerEvents = "none";
-cursorEl.style.display = "none";
-document.body.appendChild(cursorEl);
-
 document.addEventListener("DOMContentLoaded", () => {
+    const cursorEl = document.createElement("div");
+    cursorEl.id = "virtual-cursor";
+    cursorEl.style.position = "absolute";
+    cursorEl.style.width = "24px";
+    cursorEl.style.height = "24px";
+    cursorEl.style.background = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='white' stroke='black' stroke-width='1.5'%3E%3Cpath d='M3 3l7 19 3.5-7.5L21 11z'/%3E%3C/svg%3E\") no-repeat";
+    cursorEl.style.backgroundSize = "contain";
+    cursorEl.style.zIndex = "999999";
+    cursorEl.style.pointerEvents = "none";
+    cursorEl.style.display = "none";
+    const desktopArea = document.getElementById("desktop-area") || document.body;
+    desktopArea.appendChild(cursorEl);
+
     const isWorker = new URLSearchParams(window.location.search).get("mode") === "worker";
     if (!isWorker) {
-        const hopZone = document.createElement("div");
-        hopZone.style.position = "fixed";
-        hopZone.style.right = "0";
-        hopZone.style.top = "0";
-        hopZone.style.width = "20px";
-        hopZone.style.height = "100%";
-        hopZone.style.background = "linear-gradient(90deg, rgba(56,189,248,0) 0%, rgba(56,189,248,0.3) 100%)";
-        hopZone.style.cursor = "e-resize";
-        hopZone.style.zIndex = "999998";
-        hopZone.title = "Click edge to hop to Resource Node";
-        hopZone.onclick = () => document.body.requestPointerLock();
-        document.body.appendChild(hopZone);
+        // Right Hop Zone
+        const hopZoneRight = document.createElement("div");
+        hopZoneRight.style.position = "fixed";
+        hopZoneRight.style.right = "0";
+        hopZoneRight.style.top = "0";
+        hopZoneRight.style.width = "20px";
+        hopZoneRight.style.height = "100%";
+        hopZoneRight.style.background = "linear-gradient(90deg, rgba(56,189,248,0) 0%, rgba(56,189,248,0.3) 100%)";
+        hopZoneRight.style.cursor = "e-resize";
+        hopZoneRight.style.zIndex = "999998";
+        hopZoneRight.title = "Hop to Right Node";
+        hopZoneRight.onclick = () => { hopDirection = "right"; document.body.requestPointerLock(); };
+        document.body.appendChild(hopZoneRight);
+
+        // Left Hop Zone
+        const hopZoneLeft = document.createElement("div");
+        hopZoneLeft.style.position = "fixed";
+        hopZoneLeft.style.left = "0";
+        hopZoneLeft.style.top = "0";
+        hopZoneLeft.style.width = "20px";
+        hopZoneLeft.style.height = "100%";
+        hopZoneLeft.style.background = "linear-gradient(270deg, rgba(56,189,248,0) 0%, rgba(56,189,248,0.3) 100%)";
+        hopZoneLeft.style.cursor = "w-resize";
+        hopZoneLeft.style.zIndex = "999998";
+        hopZoneLeft.title = "Hop to Left Node";
+        hopZoneLeft.onclick = () => { hopDirection = "left"; document.body.requestPointerLock(); };
+        document.body.appendChild(hopZoneLeft);
     }
 });
 
@@ -591,16 +609,17 @@ document.addEventListener("pointerlockerror", () => {
 });
 
 let lastRealY = window.innerHeight / 2;
+let hopDirection = "right";
 
 document.addEventListener("pointerlockchange", () => {
     isPointerLocked = (document.pointerLockElement === document.body);
     if (!isPointerLocked) {
-        virtualX = screenWidth - 30;
+        virtualX = hopDirection === "right" ? screenWidth - 30 : 30;
         if(window.gridSocket && window.gridSocket.readyState === WebSocket.OPEN) {
             window.gridSocket.send(JSON.stringify({ type: "virtual_hide" }));
         }
     } else {
-        virtualX = screenWidth + 1;
+        virtualX = hopDirection === "right" ? screenWidth + 1 : -1;
         virtualY = lastRealY; // Start at the height the mouse was at
     }
 });
@@ -615,11 +634,18 @@ document.addEventListener("mousemove", (e) => {
         
         if (virtualY < 0) virtualY = 0;
         if (virtualY > window.innerHeight) virtualY = window.innerHeight;
-        if (virtualX > screenWidth * 2) virtualX = screenWidth * 2;
-        
-        if (virtualX <= screenWidth) {
-            document.exitPointerLock();
-            return;
+        if (hopDirection === "right") {
+            if (virtualX > screenWidth * 2) virtualX = screenWidth * 2;
+            if (virtualX <= screenWidth) {
+                document.exitPointerLock();
+                return;
+            }
+        } else {
+            if (virtualX < -screenWidth) virtualX = -screenWidth;
+            if (virtualX >= 0) {
+                document.exitPointerLock();
+                return;
+            }
         }
         
         if(window.gridSocket && window.gridSocket.readyState === WebSocket.OPEN) {
