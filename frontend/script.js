@@ -524,10 +524,14 @@ window.gridSocket.onopen = () => {
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('mode') === 'worker') {
-        // Shift entire UI to the left by the width of the Master monitor
-        // so this monitor acts as the right half of the God-Mode SOS.
-        document.body.style.marginLeft = "-1920px";
-        document.body.style.width = "3840px";
+        // Shift entire UI to the left by the width of the Master monitor * node index
+        // so multiple monitors can be chained seamlessly!
+        let nodeIndex = parseInt(urlParams.get('node_index') || "1");
+        let offset = nodeIndex * 1920;
+        let totalWidth = (nodeIndex + 1) * 1920;
+        
+        document.body.style.marginLeft = `-${offset}px`;
+        document.body.style.width = `${totalWidth}px`;
         document.body.style.overflow = "hidden";
         
         // Hide the local dock on the worker node, as the master has the dock

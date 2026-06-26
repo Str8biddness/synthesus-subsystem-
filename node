@@ -1,6 +1,7 @@
 #!/bin/bash
 echo "🌌 AIVM Planetary OS - Resource Node Extension 🌌"
 MASTER_IP="${1:-192.168.68.56}"
+NODE_INDEX="${2:-1}"
 
 echo "🔄 Connecting to Master Node at $MASTER_IP..."
 # Restart local daemon as worker (if applicable)
@@ -17,13 +18,13 @@ if [ -f "/opt/synthesus/cluster_node" ]; then
 fi
 
 if command -v google-chrome &> /dev/null; then
-    google-chrome --app="http://$MASTER_IP:8080/?mode=worker" --start-fullscreen &
+    google-chrome --app="http://$MASTER_IP:8080/?mode=worker&node_index=$NODE_INDEX" --start-fullscreen &
 elif command -v chromium &> /dev/null; then
-    chromium --app="http://$MASTER_IP:8080/?mode=worker" --start-fullscreen &
+    chromium --app="http://$MASTER_IP:8080/?mode=worker&node_index=$NODE_INDEX" --start-fullscreen &
 elif command -v firefox &> /dev/null; then
-    firefox -kiosk "http://$MASTER_IP:8080/?mode=worker" &
+    firefox -kiosk "http://$MASTER_IP:8080/?mode=worker&node_index=$NODE_INDEX" &
 else
-    xdg-open "http://$MASTER_IP:8080/?mode=worker" &
+    xdg-open "http://$MASTER_IP:8080/?mode=worker&node_index=$NODE_INDEX" &
 fi
 
 echo "✨ Merged into God-Mode Cluster as Resource Node."
